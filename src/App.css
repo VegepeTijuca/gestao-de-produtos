@@ -4,6 +4,25 @@
   box-sizing: border-box;
 }
 
+.productToolbar {
+  display: flex;
+  justify-content: center;
+  position: relative; 
+  height: 20px;
+}
+
+.searchBox {
+  background-color: white;
+  border: none;
+  border-radius: 50px;
+  width: 30vw;
+}
+
+.newProductButton {
+  width: 30px;
+  height: auto;
+}
+
 .productContainer {
   display: flex;
   flex-wrap: wrap;
@@ -18,4 +37,13 @@
   grid-template-columns: auto auto auto;
   width: 200px;
   height: 300px;
+  cursor: pointer;
+}
+
+.productInfoModal {
+  width: 90vw;
+  height: 90vh;
+  background-color: white;
+  display: grid;
+  position: absolute;
 }
