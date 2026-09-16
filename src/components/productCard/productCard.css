@@ -1,0 +1,10 @@
+.productCard {
+  background-color: rgb(55, 59, 68);
+  border: 1px solid black;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  width: 200px;
+  height: 300px;
+  cursor: pointer;
+}
