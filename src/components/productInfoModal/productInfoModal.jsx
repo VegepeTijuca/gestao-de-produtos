@@ -1,4 +1,5 @@
 import './productInfoModal.css'
+import { getProducts } from '../../utils/storage'
 
 export default function ProductInfoModal({ id, name, category, price, storage, status, image, onClose }) {
 

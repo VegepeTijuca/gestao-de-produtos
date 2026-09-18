@@ -1,1 +1,1 @@
-export { default as newProductModal } from './newProductModal';
+export { default as NewProductModal } from './newProductModal';

@@ -1,18 +1,18 @@
 import './productCard.css'
 
 export default function ProductCard({ id, name, category, price, storage, status, image, setIsInfoModalOpen }) {
+  return (
+    <div className='productLine' onClick={() => setIsInfoModalOpen?.(true)}>
+      <img src={image} alt={name} />
 
-
-
-    return (
-      <div className='productCard' onClick={() => setIsInfoModalOpen(true)}>
-        <img src={image} />
-        <h2>{name}</h2>
-        <p>{price}</p>
-        <p>{storage}</p>
-        <p>{status}</p>
-        <p>{id}</p>
-        <p>{category}</p>
+      <div className='productLine__info'>
+        <span>{name}</span>
+        <span>{category}</span>
+        <span>{price}</span>
+        <span>{storage}</span>
+        <span>{status}</span>
+        <span>{id}</span>
       </div>
-    )
-  }
+    </div>
+  )
+}
