@@ -1,0 +1,60 @@
+.deleteConfirmModal {
+  width: min(400px, 100%);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #161922;
+  border: 1px solid #262b36;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  color: #eef0f4;
+}
+
+.deleteConfirmModal h2 {
+  margin: 0;
+  color: #eef0f4;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.deleteConfirmModal p {
+  margin: 0;
+  color: #99a0ae;
+}
+
+.deleteConfirmModal .formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.deleteConfirmModal .formActions button {
+  height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background: #1d212b;
+  color: #eef0f4;
+  border: 1px solid #2a2f3b;
+}
+
+.cancelButton:hover {
+  background: #262b36;
+}
+
+.confirmDeleteButton {
+  background: #f87171;
+  color: #161922;
+}
+
+.confirmDeleteButton:hover {
+  background: #ef5757;
+}

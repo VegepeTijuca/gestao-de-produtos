@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react'
 import './App.css'
 import { getProducts } from './utils/storage';
@@ -70,6 +71,12 @@ function App() {
 
     </>
   )
+=======
+import ProductManagement from './pages/ProductManagement'
+
+function App() {
+  return <ProductManagement />
+>>>>>>> bfa3250 (Ta quebrado mas tá aí)
 }
 
 export default App

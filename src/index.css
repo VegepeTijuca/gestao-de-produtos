@@ -1,4 +1,5 @@
 :root {
+<<<<<<< HEAD
   --text: #6b6375;
   --text-h: #08060d;
   --bg: #fff;
@@ -109,3 +110,30 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+=======
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: #0d0f14;
+  color: #eef0f4;
+}
+
+/* remove as setinhas (spin buttons) de todo input numérico do app */
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+>>>>>>> bfa3250 (Ta quebrado mas tá aí)
