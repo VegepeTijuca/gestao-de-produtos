@@ -1,17 +1,4 @@
 export function getProducts() {
-<<<<<<< HEAD
-    const data = localStorage.getItem('produtos');
-    return data ? JSON.parse(data) : [];
-}
-
-export function saveProducts(products) {
-    localStorage.setItem('produtos', JSON.stringify(products));
-}
-
-
-
-
-=======
   try {
     const data = localStorage.getItem('produtos')
     return data ? JSON.parse(data) : []
@@ -30,4 +17,3 @@ export function saveProducts(products) {
     return false
   }
 }
->>>>>>> bfa3250 (Ta quebrado mas tá aí)

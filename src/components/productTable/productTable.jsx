@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-export default function ProductTable() {
-    
-    
-    
-    return {
-
-    }
-}
-=======
 import './productTable.css'
 import { CATEGORIES } from '../../utils/constants'
 
@@ -160,4 +150,3 @@ function ImagePlaceholderIcon() {
     </svg>
   )
 }
->>>>>>> bfa3250 (Ta quebrado mas tá aí)

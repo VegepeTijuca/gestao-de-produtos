@@ -3,29 +3,3 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-.productToolbar {
-  display: flex;
-  justify-content: center;
-  position: relative; 
-  height: 20px;
-}
-
-.searchBox {
-  background-color: white;
-  border: none;
-  border-radius: 50px;
-  width: 30vw;
-}
-
-.newProductButton {
-  width: 30px;
-  height: auto;
-}
-
-.productContainer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-

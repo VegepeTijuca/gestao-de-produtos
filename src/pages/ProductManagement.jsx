@@ -265,22 +265,40 @@ export default function ProductManagement() {
       </div>
 
       {modalMode && (
-        <ProductFormModal
-          product={modalMode === 'edit' ? editingProduct : null}
-          onSave={handleSave}
-          onClose={() => {
-            setModalMode(null)
-            setEditingProduct(null)
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            isolation: 'isolate',
           }}
-        />
+        >
+          <ProductFormModal
+            product={modalMode === 'edit' ? editingProduct : null}
+            onSave={handleSave}
+            onClose={() => {
+              setModalMode(null)
+              setEditingProduct(null)
+            }}
+          />
+        </div>
       )}
 
       {deletingProduct && (
-        <DeleteConfirmModal
-          product={deletingProduct}
-          onConfirm={handleConfirmDelete}
-          onCancel={() => setDeletingProduct(null)}
-        />
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            isolation: 'isolate',
+          }}
+        >
+          <DeleteConfirmModal
+            product={deletingProduct}
+            onConfirm={handleConfirmDelete}
+            onCancel={() => setDeletingProduct(null)}
+          />
+        </div>
       )}
 
     </main>

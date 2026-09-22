@@ -7,7 +7,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   padding: 32px;
-  overflow-x: hidden;
+  overflow-y: hidden;
   color: #eef0f4;
   background: #0d0f14;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
