@@ -1,46 +1,46 @@
-
-
 import { getProducts, saveProducts } from '../utils/storage'
 import { useState } from 'react'
 
 export function useProducts() {
-  const [products, setProducts] = useState(() => getProducts())
+  const [products, setProducts] = useState(() => {
+    const storedProducts = getProducts()
+    return Array.isArray(storedProducts) ? storedProducts : []
+  })
   const [error, setError] = useState(null)
+
+  const persistProducts = (nextProducts, message) => {
+    try {
+      const success = saveProducts(nextProducts)
+      setError(success === false ? message : null)
+      return success !== false
+    } catch {
+      setError(message)
+      return false
+    }
+  }
 
   const listProducts = () => products
 
   const addProduct = (product) => {
-    const newId = products.length
-      ? Math.max(...products.map(({ id }) => Number(id) || 0)) + 1
-      : 1
-    const newProduct = { ...product, id: product.id ?? newId }
-    setProducts((currentProducts) => {
-      const updatedProducts = [...currentProducts, newProduct]
-      const success = saveProducts(updatedProducts)
-      setError(success ? null : 'Não foi possível salvar o produto.')
-      return updatedProducts
-    })
+    const newProduct = { ...product, id: product.id ?? crypto.randomUUID() }
+    const updatedProducts = [...products, newProduct]
+    persistProducts(updatedProducts, 'Não foi possível salvar o produto.')
+    setProducts(updatedProducts)
     return newProduct
   }
 
   const editProduct = (id, changes) => {
-    setProducts((currentProducts) => {
-      const updatedProducts = currentProducts.map((product) =>
-        product.id === id ? { ...product, ...changes, id } : product,
-      )
-      const success = saveProducts(updatedProducts)
-      setError(success ? null : 'Não foi possível salvar as alterações.')
-      return updatedProducts
-    })
+    const updatedProducts = products.map((product) =>
+      product.id === id ? { ...product, ...changes, id } : product,
+    )
+    persistProducts(updatedProducts, 'Não foi possível salvar as alterações.')
+    setProducts(updatedProducts)
   }
 
   const removeProduct = (id) => {
-    setProducts((currentProducts) => {
-      const updatedProducts = currentProducts.filter((product) => product.id !== id)
-      const success = saveProducts(updatedProducts)
-      setError(success ? null : 'Não foi possível excluir o produto.')
-      return updatedProducts
-    })
+    const updatedProducts = products.filter((product) => product.id !== id)
+    persistProducts(updatedProducts, 'Não foi possível excluir o produto.')
+    setProducts(updatedProducts)
   }
 
   const filterProducts = (term) => {
@@ -53,7 +53,10 @@ export function useProducts() {
     )
   }
 
-  const refresh = () => setProducts(getProducts())
+  const refresh = () => {
+    const storedProducts = getProducts()
+    setProducts(Array.isArray(storedProducts) ? storedProducts : [])
+  }
 
   return {
     products,

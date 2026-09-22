@@ -28,13 +28,17 @@ export default function ProductFormModal({ product, onSave, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault()
 
+    const numericPrice = Number(String(price).replace(',', '.'))
+    const numericStorage = Number(storage)
     const isValid =
       name.trim() !== '' &&
       category !== '' &&
-      Number(price) > 0 &&
+      Number.isFinite(numericPrice) &&
+      numericPrice > 0 &&
       storage !== '' &&
-      Number(storage) >= 0 &&
-      Number.isInteger(Number(storage))
+      Number.isFinite(numericStorage) &&
+      numericStorage >= 0 &&
+      Number.isInteger(numericStorage)
 
     setValidFields(isValid)
 
@@ -42,14 +46,17 @@ export default function ProductFormModal({ product, onSave, onClose }) {
       const productData = {
         name: name.trim(),
         category,
-        price: Number(price),
-        storage: Number(storage),
+        price: numericPrice,
+        storage: numericStorage,
         status,
         image,
       }
 
-      productData.id = isEdit ? product.id : crypto.randomUUID()
+      // O useProducts gera o ID para novos produtos e preserva o ID na edição.
+      if (isEdit) productData.id = product.id
 
+      // A persistência é feita pelo useProducts/storage. Evita gravar usando
+      // uma chave/formato diferente do utilizado pelo restante da aplicação.
       onSave?.(productData)
     }
   }

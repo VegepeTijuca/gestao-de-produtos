@@ -1,8 +1,14 @@
 import './productTable.css'
-import { CATEGORIES } from '../../utils/constants'
+import { CATEGORIES, STATUS_OPTIONS } from '../../utils/constants'
 
+// mapeia as categorias pra exibir labels
 const categoryLabels = Object.fromEntries(CATEGORIES.map((c) => [c.value, c.label]))
 
+function getStatusLabel(statusValue) {
+  return STATUS_OPTIONS.find((status) => status.value === statusValue)?.label ?? statusValue
+}
+
+// colunas visíveis da tabela e suas larguras.
 const columns = [
   { field: 'name', label: 'Nome', type: 'string', width: '24%' },
   { field: 'category', label: 'Categoria', type: 'string', width: '16%' },
@@ -15,6 +21,8 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
   return (
     <div className='tableWrapper'>
       <table className='productTable'>
+
+        {/* define a largura de cada coluna */}
         <colgroup>
           <col style={{ width: '64px' }} />
           {columns.map((column) => (
@@ -39,6 +47,7 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
         </thead>
 
         <tbody>
+          {/* mensagem quando não houverem produtos */}
           {products.length === 0 && (
             <tr>
               <td colSpan={columns.length + 2} className='emptyRow'>
@@ -47,8 +56,10 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
             </tr>
           )}
 
+          {/* lista principal de produtos; cada linha representa um item da tabela */}
           {products.map((product) => (
             <tr key={product.id} onClick={() => onRowClick?.(product)}>
+              {/* mostra thumbnail ou espaço reservado quando não existe imagem */}
               <td className='imageCell'>
                 {product.image ? (
                   <img src={product.image} alt={product.name} className='productThumb' />
@@ -58,6 +69,8 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
                   </div>
                 )}
               </td>
+
+              {/* dados do produto (nome, categoria, preço e estoque) */}
               <td>{product.name}</td>
               <td>{categoryLabels[product.category] ?? product.category}</td>
               <td>
@@ -67,9 +80,15 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
                 })}
               </td>
               <td>{product.storage ?? 0}</td>
+
+              {/* status com cores */}
               <td>
-                <span className={`statusBadge statusBadge--${product.status}`}>{product.status}</span>
+                <span className={`statusBadge statusBadge--${product.status}`}>
+                  {getStatusLabel(product.status)}
+                </span>
               </td>
+
+              {/* ações por linha (Editar e excluir) */}
               <td className='actionsCell'>
                 <button
                   type='button'
