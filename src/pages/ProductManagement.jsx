@@ -195,6 +195,19 @@ export default function ProductManagement() {
         />
 
         <div className='pagination'>
+
+          <span
+            className='itemsShown'
+            style={{
+              whiteSpace: 'nowrap',
+              color: '#64748b',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              marginRight: 'auto',
+            }}
+          >
+            Exibindo {paginatedProducts.length} de {visibleProducts.length} itens
+          </span>
           <button
             type='button'
             className='pageEdgeButton'
