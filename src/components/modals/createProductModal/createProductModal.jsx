@@ -5,6 +5,7 @@ import './createProductModal.css'
 export default function CreateProductModal({ onCreate, onClose }) {
   const form = useProductForm(null)
 
+  // se for válido, adiciona novo UUID
   const handleSubmit = (e) => {
     e.preventDefault()
 

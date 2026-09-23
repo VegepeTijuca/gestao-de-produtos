@@ -41,12 +41,6 @@ export function useProducts() {
     })
   }
 
-  // busca só pelo nome do produto (é o que o campo de pesquisa promete:
-  // "Insira o nome do produto"). Antes isso batia em Object.values(product)
-  // inteiro, incluindo o id e a imagem em base64 — como essas strings são
-  // enormes, qualquer termo curto (1-2 letras) tinha grande chance de "achar"
-  // ruído dentro delas, e a busca só parecia funcionar de verdade a partir de
-  // uns 3 caracteres.
   const filterProducts = (term) => {
     const normalizedTerm = String(term ?? '').trim().toLowerCase()
     if (!normalizedTerm) return products
@@ -55,9 +49,6 @@ export function useProducts() {
     )
   }
 
-  // useCallback: mantém a mesma referência de função entre renderizações,
-  // para que efeitos que dependem dela (ex.: o listener de 'storage') não
-  // precisem ser refeitos toda hora.
   const refresh = useCallback(() => setProducts(getProducts()), [])
 
   return {
@@ -72,9 +63,6 @@ export function useProducts() {
   }
 }
 
-// Estado e validação do formulário de produto, compartilhados entre o
-// CreateProductModal e o EditProductModal (que cuidam, cada um, do próprio
-// submit e de decidir se chama add ou edit).
 export function useProductForm(initialProduct) {
   const [name, setName] = useState(initialProduct?.name ?? '')
   const [category, setCategory] = useState(initialProduct?.category ?? '')
@@ -90,6 +78,7 @@ export function useProductForm(initialProduct) {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // filereader pra imagem
     const reader = new FileReader()
     reader.onload = () => setImage(reader.result)
     reader.readAsDataURL(file)

@@ -8,8 +8,6 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* padding fica no <main>, não no body, pra fake nav poder ocupar
-   toda a largura/topo da página sem essa margem */
 main {
   display: block;
   max-width: 1180px;
@@ -74,9 +72,6 @@ main {
   justify-content: flex-end;
 }
 
-/* quando o toolbar quebra linha (tela estreita ou muitos filtros ativos),
-   as ações ficam centralizadas como um grupo, em vez de esticadas com
-   espaços desiguais entre elas */
 @media (max-width: 860px) {
   .productToolbar {
     flex-direction: column;

@@ -1,5 +1,3 @@
-// Palavra reservada usada nos filtros para representar "sem filtro selecionado".
-// Não pode ser confundida com um valor real de categoria/status (que nunca é vazio).
 export const ALL_VALUE = '__todos__'
 
 export const CATEGORIES = [

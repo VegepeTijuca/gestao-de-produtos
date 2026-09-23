@@ -26,6 +26,7 @@ export default function EditProductModal({ product, onSave, onClose }) {
 
         <ProductFormFields form={form} />
 
+        {/* Aviso pra preencher corretamente */}
         {!form.validFields && <p className='formError'>Preencha todos os campos corretamente.</p>}
 
         <div className='formActions'>

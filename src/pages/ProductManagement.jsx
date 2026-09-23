@@ -32,7 +32,6 @@ export default function ProductManagement() {
     return () => window.removeEventListener('storage', refresh)
   }, [refresh])
 
-  // busca por nome + filtros de categoria e status, todos em conjunto
   let visibleProducts = filter(searchTerm)
   if (categoryFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.category === categoryFilter)
   if (statusFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.status === statusFilter)
@@ -57,10 +56,6 @@ export default function ProductManagement() {
     currentPage * itemsPerPage,
   )
 
-  // Mantém o campo de "ir para página" sincronizado quando a página muda por outro
-  // meio (botões, filtros que reduzem o total de páginas etc.), sem precisar de
-  // useEffect: ajustamos o estado direto durante a renderização quando percebemos
-  // que currentPage mudou desde a última vez.
   if (currentPage !== ultimaPaginaSincronizada) {
     setUltimaPaginaSincronizada(currentPage)
     setPageInput(String(currentPage))
@@ -80,7 +75,6 @@ export default function ProductManagement() {
     }
   }
 
-  // mensagem de "não encontrado": diferente se o catálogo tá vazio ou se é só o filtro que não achou nada
   const emptyMessage =
     products.length === 0
       ? 'Nenhum produto cadastrado ainda. Clique em "Novo Produto" para começar.'
@@ -113,12 +107,10 @@ export default function ProductManagement() {
   return (
     <main>
 
-      {/* div que engloba o painel inteiro (cabeçalho + toolbar + tabela + paginação) */}
       <div className="panel">
 
         <div className="productToolbar">
 
-          {/* título do toolbar (a logo já aparece na nav acima) */}
           <div className="brandSection">
             <span className="brandTitle">Gestão de Produtos</span>
           </div>
@@ -133,7 +125,6 @@ export default function ProductManagement() {
               }}
             />
 
-            {/* botão de filtros com dropdown */}
             <div className="filtersWrapper">
               <button
                 type="button"
@@ -177,7 +168,6 @@ export default function ProductManagement() {
               )}
             </div>
 
-            {/* Novo produto */}
             <button
               type="button"
               className='newProductButton'
@@ -190,14 +180,13 @@ export default function ProductManagement() {
           </div>
 
         </div>
-
-        {/* estado de erro (ex.: falha ao salvar no localStorage) */}
         {error && <p className="errorBanner">{error}</p>}
 
         {/* tabela de produtos */}
         <ProductTable
           products={paginatedProducts}
-          sortField={sortField}
+          sortFie
+          ld={sortField}
           sortDirection={sortDirection}
           onSort={handleSort}
           onEdit={(product) => setEditingProduct(product)}
@@ -205,7 +194,6 @@ export default function ProductManagement() {
           emptyMessage={emptyMessage}
         />
 
-        {/* paginação */}
         <div className='pagination'>
           <button
             type='button'
@@ -300,6 +288,8 @@ export default function ProductManagement() {
     </main>
   )
 }
+
+// ícones
 
 function FilterIcon() {
   return (

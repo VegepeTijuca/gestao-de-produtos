@@ -1,9 +1,7 @@
 import './adminNav.css'
 import tijucaLogo from '../../assets/tijuca.png'
 
-// Nav decorativa, sem roteamento de verdade: existe só pra deixar claro que
-// esta tela (Gestão de Produtos) é uma parte de um site de admin maior.
-// Os links não levam a lugar nenhum de propósito.
+// Nav decorativa
 const NAV_LINKS = [
   { label: 'Dashboard' },
   { label: 'Produtos', active: true },

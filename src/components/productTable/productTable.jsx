@@ -1,6 +1,8 @@
 import './productTable.css'
 import { CATEGORIES } from '../../utils/constants'
 
+// Cria um objeto para traduzir o valor salvo da categoria para o rótulo exibido na tabela.
+// Exemplo: [{ value: 'electronics', label: 'Eletrônicos' }] vira { electronics: 'Eletrônicos' }.
 const categoryLabels = Object.fromEntries(CATEGORIES.map((c) => [c.value, c.label]))
 
 const columns = [
@@ -15,6 +17,9 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
   return (
     <div className='tableWrapper'>
       <table className='productTable'>
+        {/* Define a largura de cada coluna da tabela em um único lugar.
+          O primeiro <col> é da imagem, os próximos correspondem às colunas
+          de dados e o último é reservado para as ações. */}
         <colgroup>
           <col style={{ width: '80px' }} />
           {columns.map((column) => (
@@ -103,6 +108,7 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
   )
 }
 
+// ícones
 function SortIcon({ active, direction }) {
   if (!active) {
     return (
