@@ -17,8 +17,9 @@
 }
 
 .adminNavLogo {
-  width: 96px;
-  height: 96px;
+  width: auto;
+  height: 64px;
+  margin: 10px;
   border-radius: 14px;
   object-fit: cover;
   flex-shrink: 0;

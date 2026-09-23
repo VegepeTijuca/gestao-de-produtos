@@ -1,8 +1,6 @@
 import { CATEGORIES, STATUS_OPTIONS } from '../../../utils/constants'
+import './productForm.css'
 
-// Só os campos do formulário (sem <form>, sem overlay, sem botões de ação).
-// Usado dentro do CreateProductModal e do EditProductModal, que cuidam cada
-// um do próprio título, submit e onSave/onCreate.
 export default function ProductFormFields({ form }) {
   const { fields, setters, handleImageChange } = form
   const { name, category, price, storage, status } = fields
@@ -11,7 +9,10 @@ export default function ProductFormFields({ form }) {
   return (
     <>
       <div className='imageInput'>
+
+        <label htmlFor='product-image'>Imagem</label>
         <input
+          id='product-image'
           type='file'
           accept='image/*'
           onChange={handleImageChange}

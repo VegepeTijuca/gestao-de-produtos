@@ -36,9 +36,13 @@
     color: #99a0ae;
 }
 
-label span {
+#productImage {
+    margin-top: 10px;
+}
+
+.productFormModal label span {
     font-weight: bold;
-    color: #f87171;
+    color: inherit;
 }
 
 .productFormModal input,
@@ -62,8 +66,70 @@ label span {
 .imageInput {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+}
+
+.imageInput__label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.imageInput__title {
+    color: #eef0f4;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.imageInput__hint {
+    color: #99a0ae;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.imageInput input[type='file'] {
+    width: 100%;
+    min-height: 72px;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    border: 1px dashed #4a5263;
+    border-radius: 10px;
+    color: #99a0ae;
+    background: #1d212b;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.imageInput input[type='file']::file-selector-button {
+    height: 34px;
+    margin-right: 12px;
+    padding: 0 14px;
+    border: 1px solid #7c6cf6;
+    border-radius: 7px;
+    color: #eef0f4;
+    background: #29234f;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.imageInput input[type='file']:hover {
+    border-color: #7c6cf6;
+    background: #222638;
+}
+
+.imageInput input[type='file']:hover::file-selector-button {
+    background: #39306b;
+}
+
+.imageInput input[type='file']:focus {
+    outline: none;
+    border-color: #8b7bfa;
+    box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.2);
 }
 
 .formError {
