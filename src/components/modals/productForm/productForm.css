@@ -1,12 +1,8 @@
 .productFormModal {
     width: min(90vw, 520px);
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
     max-height: 90vh;
     overflow-y: auto;
+    position: fixed;
     padding: 24px 20px;
     display: flex;
     flex-direction: column;

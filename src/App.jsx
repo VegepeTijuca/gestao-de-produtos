@@ -1,7 +1,13 @@
+import AdminNav from './components/adminNav/adminNav'
 import ProductManagement from './pages/ProductManagement'
 
 function App() {
-  return <ProductManagement />
+  return (
+    <>
+      <AdminNav />
+      <ProductManagement />
+    </>
+  )
 }
 
 export default App

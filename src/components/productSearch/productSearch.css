@@ -1,0 +1,30 @@
+.searchBox {
+  flex: 1 1 160px;
+  min-width: 140px;
+  max-width: 240px;
+  height: 44px;
+  padding: 0 16px;
+  color: #eef0f4;
+  background-color: #1d212b;
+  border: 1px solid #2a2f3b;
+  border-radius: 10px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.searchBox::placeholder {
+  color: #6b7280;
+}
+
+.searchBox:focus {
+  border-color: #7c6cf6;
+  box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.2);
+}
+
+@media (max-width: 640px) {
+  .searchBox {
+    order: -1;
+    width: 100%;
+    max-width: none;
+  }
+}

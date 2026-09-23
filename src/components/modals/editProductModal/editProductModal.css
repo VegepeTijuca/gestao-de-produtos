@@ -1,0 +1,118 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 6, 10, 0.6);
+}
+
+.productFormModal {
+  width: min(90vw, 520px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #161922;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  border: 1px solid #262b36;
+  text-align: left;
+  color: #eef0f4;
+}
+
+.title h2 {
+  margin: 0;
+  color: #eef0f4;
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+
+.title h3 {
+  margin: 0;
+  color: #99a0ae;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.productFormModal label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #99a0ae;
+}
+
+.productFormModal label span {
+  font-weight: bold;
+  color: #f87171;
+}
+
+.productFormModal input,
+.productFormModal select {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #2a2f3b;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #eef0f4;
+  background: #1d212b;
+}
+
+.productFormModal input:focus,
+.productFormModal select:focus {
+  outline: none;
+  border-color: #7c6cf6;
+  box-shadow: 0 0 0 3px rgba(124, 108, 246, 0.2);
+}
+
+.imageInput {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+
+.formError {
+  margin: 0;
+  color: #f87171;
+  font-size: 0.85rem;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.formActions button {
+  height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background: #1d212b;
+  color: #eef0f4;
+  border: 1px solid #2a2f3b;
+}
+
+.cancelButton:hover {
+  background: #262b36;
+}
+
+.submitButton {
+  background: linear-gradient(135deg, #8b7bfa, #6552e8);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(124, 108, 246, 0.3);
+}
+
+.submitButton:hover {
+  box-shadow: 0 10px 24px rgba(124, 108, 246, 0.4);
+}

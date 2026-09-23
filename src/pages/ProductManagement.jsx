@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import './ProductManagement.css'
 import { useProducts } from '../hooks/hooks'
-import { ProductTable, ProductFormModal, DeleteConfirmModal } from '../components'
+import { ProductTable, ProductSearch, CreateProductModal, EditProductModal, DeleteConfirmModal } from '../components'
 import { ALL_VALUE, CATEGORIES, STATUS_OPTIONS } from '../utils/constants'
 
 const itemsPerPage = 5
@@ -10,22 +11,74 @@ const numericSortFields = ['price', 'storage']
 export default function ProductManagement() {
   const { products, add, edit, remove, filter, refresh, error } = useProducts()
 
-  const search = useProductSearch(products, filter)
-  const {
-    searchTerm, setSearchTerm, categoryFilter, setCategoryFilter,
-    statusFilter, setStatusFilter, isFiltersOpen, setIsFiltersOpen,
-    sortField, setSortField, sortDirection, setSortDirection, setPage, pageInput, setPageInput,
-    currentPage, totalPages, paginatedProducts, goToPage, commitPageInput,
-  } = search
+  const [searchTerm, setSearchTerm] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState(ALL_VALUE)
+  const [statusFilter, setStatusFilter] = useState(ALL_VALUE)
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
-  const [modalMode, setModalMode] = useState(null) // 'create' | 'edit' | null
+  const [sortField, setSortField] = useState(null)
+  const [sortDirection, setSortDirection] = useState('asc')
+
+  const [page, setPage] = useState(1)
+  const [pageInput, setPageInput] = useState('1')
+  const [ultimaPaginaSincronizada, setUltimaPaginaSincronizada] = useState(1)
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [deletingProduct, setDeletingProduct] = useState(null)
 
   useEffect(() => {
     window.addEventListener('storage', refresh)
     return () => window.removeEventListener('storage', refresh)
-  }, [])
+  }, [refresh])
+
+  // busca por nome + filtros de categoria e status, todos em conjunto
+  let visibleProducts = filter(searchTerm)
+  if (categoryFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.category === categoryFilter)
+  if (statusFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.status === statusFilter)
+
+  // ordenação por coluna (números comparados como número, texto sem diferenciar maiúscula/minúscula)
+  if (sortField) {
+    const isNumeric = numericSortFields.includes(sortField)
+    visibleProducts = [...visibleProducts].sort((a, b) => {
+      const valueA = isNumeric ? Number(a[sortField]) : String(a[sortField] ?? '').toLowerCase()
+      const valueB = isNumeric ? Number(b[sortField]) : String(b[sortField] ?? '').toLowerCase()
+      if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1
+      if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
+  }
+
+  // paginação
+  const totalPages = Math.max(1, Math.ceil(visibleProducts.length / itemsPerPage))
+  const currentPage = Math.min(page, totalPages)
+  const paginatedProducts = visibleProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  )
+
+  // Mantém o campo de "ir para página" sincronizado quando a página muda por outro
+  // meio (botões, filtros que reduzem o total de páginas etc.), sem precisar de
+  // useEffect: ajustamos o estado direto durante a renderização quando percebemos
+  // que currentPage mudou desde a última vez.
+  if (currentPage !== ultimaPaginaSincronizada) {
+    setUltimaPaginaSincronizada(currentPage)
+    setPageInput(String(currentPage))
+  }
+
+  const goToPage = (targetPage) => {
+    const clamped = Math.min(Math.max(targetPage, 1), totalPages)
+    setPage(clamped)
+  }
+
+  const commitPageInput = () => {
+    const parsed = Number(pageInput)
+    if (Number.isInteger(parsed)) {
+      goToPage(parsed)
+    } else {
+      setPageInput(String(currentPage))
+    }
+  }
 
   // mensagem de "não encontrado": diferente se o catálogo tá vazio ou se é só o filtro que não achou nada
   const emptyMessage =
@@ -42,13 +95,13 @@ export default function ProductManagement() {
     }
   }
 
-  const handleSave = (productData) => {
-    if (productData.id !== undefined) {
-      edit(productData.id, productData)
-    } else {
-      add(productData)
-    }
-    setModalMode(null)
+  const handleCreate = (productData) => {
+    add(productData)
+    setIsCreateModalOpen(false)
+  }
+
+  const handleEditSave = (id, changes) => {
+    edit(id, changes)
     setEditingProduct(null)
   }
 
@@ -65,21 +118,17 @@ export default function ProductManagement() {
 
         <div className="productToolbar">
 
-          {/* logo + título, dentro do toolbar */}
+          {/* título do toolbar (a logo já aparece na nav acima) */}
           <div className="brandSection">
-            <img src="/favicon.svg" alt="Logo" className="brandLogo" />
             <span className="brandTitle">Gestão de Produtos</span>
           </div>
 
           <div className="toolbarActions">
 
-            <input
-              type='text'
-              placeholder='Insira o nome do produto'
-              className='searchBox'
+            <ProductSearch
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
+              onChange={(term) => {
+                setSearchTerm(term)
                 setPage(1)
               }}
             />
@@ -132,10 +181,7 @@ export default function ProductManagement() {
             <button
               type="button"
               className='newProductButton'
-              onClick={() => {
-                setEditingProduct(null)
-                setModalMode('create')
-              }}
+              onClick={() => setIsCreateModalOpen(true)}
             >
               <PlusIcon />
               Novo Produto
@@ -154,10 +200,7 @@ export default function ProductManagement() {
           sortField={sortField}
           sortDirection={sortDirection}
           onSort={handleSort}
-          onEdit={(product) => {
-            setEditingProduct(product)
-            setModalMode('edit')
-          }}
+          onEdit={(product) => setEditingProduct(product)}
           onDelete={(product) => setDeletingProduct(product)}
           emptyMessage={emptyMessage}
         />
@@ -216,41 +259,42 @@ export default function ProductManagement() {
 
       </div>
 
-      {modalMode && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            isolation: 'isolate',
-          }}
-        >
-          <ProductFormModal
-            product={modalMode === 'edit' ? editingProduct : null}
-            onSave={handleSave}
-            onClose={() => {
-              setModalMode(null)
-              setEditingProduct(null)
-            }}
-          />
-        </div>
+      {isCreateModalOpen && (
+        createPortal(
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+            <CreateProductModal
+              onCreate={handleCreate}
+              onClose={() => setIsCreateModalOpen(false)}
+            />
+          </div>,
+          document.body,
+        )
+      )}
+
+      {editingProduct && (
+        createPortal(
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+            <EditProductModal
+              product={editingProduct}
+              onSave={handleEditSave}
+              onClose={() => setEditingProduct(null)}
+            />
+          </div>,
+          document.body,
+        )
       )}
 
       {deletingProduct && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            isolation: 'isolate',
-          }}
-        >
-          <DeleteConfirmModal
-            product={deletingProduct}
-            onConfirm={handleConfirmDelete}
-            onCancel={() => setDeletingProduct(null)}
-          />
-        </div>
+        createPortal(
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
+            <DeleteConfirmModal
+              product={deletingProduct}
+              onConfirm={handleConfirmDelete}
+              onCancel={() => setDeletingProduct(null)}
+            />
+          </div>,
+          document.body,
+        )
       )}
 
     </main>
@@ -276,7 +320,7 @@ function PlusIcon() {
 
 function ChevronsLeftIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="11 17 6 12 11 7" />
       <polyline points="18 17 13 12 18 7" />
     </svg>
@@ -285,61 +329,9 @@ function ChevronsLeftIcon() {
 
 function ChevronsRightIcon() {
   return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="13 17 18 12 13 7" />
       <polyline points="6 17 11 12 6 7" />
     </svg>
   )
-}
-
-// Pode ser movido para um componente/hook próprio: concentra busca, filtros,
-// ordenação e paginação, deixando a página responsável apenas pela renderização.
-function useProductSearch(products, filter) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState(ALL_VALUE)
-  const [statusFilter, setStatusFilter] = useState(ALL_VALUE)
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-  const [sortField, setSortField] = useState(null)
-  const [sortDirection, setSortDirection] = useState('asc')
-  const [page, setPage] = useState(1)
-  const [pageInput, setPageInput] = useState('1')
-
-  // Aplica a busca localmente para que até uma única letra seja considerada.
-  const normalizedSearch = searchTerm.trim().toLowerCase()
-  let visibleProducts = products.filter((product) =>
-    String(product.name ?? '').toLowerCase().includes(normalizedSearch),
-  )
-  if (categoryFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.category === categoryFilter)
-  if (statusFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.status === statusFilter)
-
-  if (sortField) {
-    const isNumeric = numericSortFields.includes(sortField)
-    visibleProducts = [...visibleProducts].sort((a, b) => {
-      const valueA = isNumeric ? Number(a[sortField]) : String(a[sortField] ?? '').toLowerCase()
-      const valueB = isNumeric ? Number(b[sortField]) : String(b[sortField] ?? '').toLowerCase()
-      if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1
-      if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1
-      return 0
-    })
-  }
-
-  const totalPages = Math.max(1, Math.ceil(visibleProducts.length / itemsPerPage))
-  const currentPage = Math.min(page, totalPages)
-  const paginatedProducts = visibleProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-
-  useEffect(() => setPageInput(String(currentPage)), [currentPage])
-
-  const goToPage = (targetPage) => setPage(Math.min(Math.max(targetPage, 1), totalPages))
-  const commitPageInput = () => {
-    const parsed = Number(pageInput)
-    if (Number.isInteger(parsed)) goToPage(parsed)
-    else setPageInput(String(currentPage))
-  }
-
-  return {
-    searchTerm, setSearchTerm, categoryFilter, setCategoryFilter,
-    statusFilter, setStatusFilter, isFiltersOpen, setIsFiltersOpen,
-    sortField, sortDirection, page, setPage, pageInput, setPageInput,
-    currentPage, totalPages, paginatedProducts, goToPage, commitPageInput,
-  }
 }

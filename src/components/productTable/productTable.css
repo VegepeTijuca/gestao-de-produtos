@@ -63,6 +63,10 @@
   color: #99a0ae;
 }
 
+.productTable tbody tr {
+  cursor: pointer;
+}
+
 .productTable tbody tr:nth-child(even) {
   background: #1a1d26;
 }
@@ -76,9 +80,11 @@
 }
 
 .imageCell {
+  padding: 8px;
   text-align: center;
-  overflow: visible;
+  overflow: hidden;
   text-overflow: clip;
+  white-space: normal;
 }
 
 .productThumb {
