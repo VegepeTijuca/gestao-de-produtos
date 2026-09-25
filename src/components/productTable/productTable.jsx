@@ -1,10 +1,10 @@
 import './productTable.css'
 import { CATEGORIES } from '../../utils/constants'
 
-// Cria um objeto para traduzir o valor salvo da categoria para o rótulo exibido na tabela.
-// Exemplo: [{ value: 'electronics', label: 'Eletrônicos' }] vira { electronics: 'Eletrônicos' }.
+// Mapeia o valor interno de cada categoria para o rótulo exibido.
 const categoryLabels = Object.fromEntries(CATEGORIES.map((c) => [c.value, c.label]))
 
+// Configuração das colunas de dados e das respectivas larguras.
 const columns = [
   { field: 'name', label: 'Nome', type: 'string', width: '24%' },
   { field: 'category', label: 'Categoria', type: 'string', width: '16%' },
@@ -17,9 +17,7 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
   return (
     <div className='tableWrapper'>
       <table className='productTable'>
-        {/* Define a largura de cada coluna da tabela em um único lugar.
-          O primeiro <col> é da imagem, os próximos correspondem às colunas
-          de dados e o último é reservado para as ações. */}
+        {/* Mantém as larguras das colunas centralizadas em um único lugar. */}
         <colgroup>
           <col style={{ width: '80px' }} />
           {columns.map((column) => (
@@ -31,6 +29,7 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
         <thead>
           <tr>
             <th className='imageHeader'>Imagem</th>
+            {/* Cabeçalhos clicáveis acionam a ordenação da tabela. */}
             {columns.map((column) => (
               <th key={column.field} onClick={() => onSort(column.field)}>
                 <span className='thContent'>
@@ -44,6 +43,7 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
         </thead>
 
         <tbody>
+          {/* Informa ao usuário quando não há produtos para exibir. */}
           {products.length === 0 && (
             <tr>
               <td colSpan={columns.length + 2} className='emptyRow'>
@@ -52,6 +52,7 @@ export default function ProductTable({ products, sortField, sortDirection, onSor
             </tr>
           )}
 
+          {/* Cada linha representa um produto e pode abrir seus detalhes. */}
           {products.map((product) => (
             <tr key={product.id} onClick={() => onRowClick?.(product)}>
               <td className='imageCell'>

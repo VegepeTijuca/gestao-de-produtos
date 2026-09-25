@@ -7,6 +7,7 @@ export default function ProductSearch({ value, onChange, placeholder = 'Insira o
       placeholder={placeholder}
       className='searchBox'
       value={value}
+      // Envia o texto digitado para atualizar o valor da busca.
       onChange={(e) => onChange(e.target.value)}
     />
   )

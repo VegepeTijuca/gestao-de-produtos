@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './ProductManagement.css'
 import { useProducts } from '../hooks/hooks'
-import { ProductTable, ProductSearch, CreateProductModal, EditProductModal, DeleteConfirmModal } from '../components'
+import { ProductTable, ProductSearch, Pagination, CreateProductModal, EditProductModal, DeleteConfirmModal } from '../components'
 import { ALL_VALUE, CATEGORIES, STATUS_OPTIONS } from '../utils/constants'
 
 const itemsPerPage = 5
@@ -11,6 +11,7 @@ const numericSortFields = ['price', 'storage']
 export default function ProductManagement() {
   const { products, add, edit, remove, filter, refresh, error } = useProducts()
 
+  // Filtros e ordenação aplicados à lista de produtos.
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState(ALL_VALUE)
   const [statusFilter, setStatusFilter] = useState(ALL_VALUE)
@@ -27,11 +28,13 @@ export default function ProductManagement() {
   const [editingProduct, setEditingProduct] = useState(null)
   const [deletingProduct, setDeletingProduct] = useState(null)
 
+  // Atualiza a lista quando outra aba altera os produtos.
   useEffect(() => {
     window.addEventListener('storage', refresh)
     return () => window.removeEventListener('storage', refresh)
   }, [refresh])
 
+  // Aplica busca, filtros selecionados e ordenação antes da paginação.
   let visibleProducts = filter(searchTerm)
   if (categoryFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.category === categoryFilter)
   if (statusFilter !== ALL_VALUE) visibleProducts = visibleProducts.filter((p) => p.status === statusFilter)
@@ -48,20 +51,27 @@ export default function ProductManagement() {
     })
   }
 
-  // paginação
+  // Calcula quantas páginas são necessárias para exibir todos os produtos.
   const totalPages = Math.max(1, Math.ceil(visibleProducts.length / itemsPerPage))
+
+  // Garante que a página atual nunca ultrapasse a última página disponível
   const currentPage = Math.min(page, totalPages)
+
+  // Seleciona apenas os produtos correspondentes à página atual.
   const paginatedProducts = visibleProducts.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   )
 
+  // Mantém o campo de página sincronizado quando a página atual é ajustada
+  // automaticamente, evitando que ele exiba um número inválido.
   if (currentPage !== ultimaPaginaSincronizada) {
     setUltimaPaginaSincronizada(currentPage)
     setPageInput(String(currentPage))
   }
 
   const goToPage = (targetPage) => {
+    // Limita o destino ao intervalo válido entre a primeira e a última página.
     const clamped = Math.min(Math.max(targetPage, 1), totalPages)
     setPage(clamped)
   }
@@ -69,37 +79,55 @@ export default function ProductManagement() {
   const commitPageInput = () => {
     const parsed = Number(pageInput)
     if (Number.isInteger(parsed)) {
+      // Ao confirmar o campo, aplica a página informada e corrige valores
+      // menores que 1 ou maiores que o total de páginas.
       goToPage(parsed)
     } else {
+      // Se o valor não for um número inteiro, restaura a página atual.
       setPageInput(String(currentPage))
     }
   }
 
   const emptyMessage =
+    // Define a mensagem exibida quando a lista não possui produtos visíveis.
+    // A mensagem varia para diferenciar uma lista realmente vazia de uma busca sem resultados.
     products.length === 0
       ? 'Nenhum produto cadastrado ainda. Clique em "Novo Produto" para começar.'
       : 'Nenhum produto encontrado com os filtros aplicados.'
 
+  // Alterna a ordenação da tabela entre crescente, decrescente e desativada.
   const handleSort = (field) => {
+    // Quando a coluna já está selecionada, o próximo clique muda sua direção.
     if (sortField === field) {
-      setSortDirection((dir) => (dir === 'asc' ? 'desc' : 'asc'))
+      if (sortDirection === 'desc') {
+        // Depois da ordenação decrescente, remove a ordenação da coluna.
+        setSortField(null)
+        setSortDirection('asc')
+      } else {
+        // A primeira repetição da coluna inverte a ordenação para decrescente.
+        setSortDirection('desc')
+      }
     } else {
+      // Ao selecionar outra coluna, inicia a ordenação em sentido crescente.
       setSortField(field)
       setSortDirection('asc')
     }
   }
 
   const handleCreate = (productData) => {
+    // Salva o novo produto e fecha o modal após a confirmação.
     add(productData)
     setIsCreateModalOpen(false)
   }
 
   const handleEditSave = (id, changes) => {
+    // Aplica somente as alterações informadas pelo modal de edição.
     edit(id, changes)
     setEditingProduct(null)
   }
 
   const handleConfirmDelete = () => {
+    // Remove o produto confirmado e fecha o modal de exclusão.
     remove(deletingProduct.id)
     setDeletingProduct(null)
   }
@@ -182,11 +210,10 @@ export default function ProductManagement() {
         </div>
         {error && <p className="errorBanner">{error}</p>}
 
-        {/* tabela de produtos */}
+        {/* Exibe os produtos da página atual e permite ordená-los. */}
         <ProductTable
           products={paginatedProducts}
-          sortFie
-          ld={sortField}
+          sortField={sortField}
           sortDirection={sortDirection}
           onSort={handleSort}
           onEdit={(product) => setEditingProduct(product)}
@@ -194,72 +221,20 @@ export default function ProductManagement() {
           emptyMessage={emptyMessage}
         />
 
-        <div className='pagination'>
-
-          <span
-            className='itemsShown'
-            style={{
-              whiteSpace: 'nowrap',
-              color: '#64748b',
-              fontSize: '0.875rem',
-              fontWeight: 500,
-              marginRight: 'auto',
-            }}
-          >
-            Exibindo {paginatedProducts.length} de {visibleProducts.length} itens
-          </span>
-          <button
-            type='button'
-            className='pageEdgeButton'
-            disabled={currentPage === 1}
-            onClick={() => goToPage(1)}
-            title='Primeira página'
-            aria-label='Primeira página'
-          >
-            <ChevronsLeftIcon />
-          </button>
-          <button type='button' disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}>
-            Anterior
-          </button>
-
-          <span className='pageInfo'>
-            Página
-            <input
-              type='number'
-              className='pageInput'
-              min={1}
-              max={totalPages}
-              value={pageInput}
-              onChange={(e) => setPageInput(e.target.value)}
-              onBlur={commitPageInput}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  commitPageInput()
-                }
-              }}
-              aria-label='Ir para a página'
-            />
-            de {totalPages}
-          </span>
-
-          <button type='button' disabled={currentPage === totalPages} onClick={() => goToPage(currentPage + 1)}>
-            Próximo
-          </button>
-          <button
-            type='button'
-            className='pageEdgeButton'
-            disabled={currentPage === totalPages}
-            onClick={() => goToPage(totalPages)}
-            title='Última página'
-            aria-label='Última página'
-          >
-            <ChevronsRightIcon />
-          </button>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageInput={pageInput}
+          itemsShown={paginatedProducts.length}
+          totalItems={visibleProducts.length}
+          onPageInputChange={setPageInput}
+          onPageInputCommit={commitPageInput}
+          onGoToPage={goToPage}
+        />
 
       </div>
 
+      {/* Modais são renderizados no body para evitar conflitos de layout. */}
       {isCreateModalOpen && (
         createPortal(
           <div style={{ position: 'fixed', inset: 0, zIndex: 9999 }}>
@@ -321,20 +296,3 @@ function PlusIcon() {
   )
 }
 
-function ChevronsLeftIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="11 17 6 12 11 7" />
-      <polyline points="18 17 13 12 18 7" />
-    </svg>
-  )
-}
-
-function ChevronsRightIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="13 17 18 12 13 7" />
-      <polyline points="6 17 11 12 6 7" />
-    </svg>
-  )
-}

@@ -3,9 +3,10 @@ import ProductFormFields from '../productForm/productFormFields'
 import './createProductModal.css'
 
 export default function CreateProductModal({ onCreate, onClose }) {
+  // Inicializa o formulário vazio para cadastrar um novo produto.
   const form = useProductForm(null)
 
-  // se for válido, adiciona novo UUID
+  // Valida os campos e cria um identificador único para o produto.
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -18,7 +19,9 @@ export default function CreateProductModal({ onCreate, onClose }) {
   }
 
   return (
+    // Fecha o modal ao clicar fora do formulário.
     <div className='modalOverlay' onClick={onClose}>
+      {/* Impede que cliques dentro do formulário fechem o modal. */}
       <form className='productFormModal' onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
         <div className='title'>
           <h2>Adição de produto</h2>
@@ -27,6 +30,7 @@ export default function CreateProductModal({ onCreate, onClose }) {
 
         <ProductFormFields form={form} />
 
+        {/* Exibe a mensagem quando a validação falha. */}
         {!form.validFields && <p className='formError'>Preencha todos os campos corretamente.</p>}
 
         <div className='formActions'>

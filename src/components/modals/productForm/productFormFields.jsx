@@ -2,12 +2,14 @@ import { CATEGORIES, STATUS_OPTIONS } from '../../../utils/constants'
 import './productForm.css'
 
 export default function ProductFormFields({ form }) {
+  // Obtém os valores atuais, os atualizadores e o tratamento da imagem.
   const { fields, setters, handleImageChange } = form
   const { name, category, price, storage, status } = fields
   const { setName, setCategory, setPrice, setStorage, setStatus } = setters
 
   return (
     <>
+      {/* Campo opcional para selecionar a imagem do produto. */}
       <div className='imageInput'>
 
         <label htmlFor='product-image'>Imagem</label>
@@ -19,6 +21,7 @@ export default function ProductFormFields({ form }) {
         />
       </div>
 
+      {/* Campos obrigatórios do produto. */}
       <label>Nome <span>*</span></label>
       <input
         type='text'
@@ -60,6 +63,7 @@ export default function ProductFormFields({ form }) {
         onChange={(e) => setStorage(e.target.value)}
       />
 
+      {/* O status é preenchido a partir das opções disponíveis. */}
       <label>Status</label>
       <select value={status} onChange={(e) => setStatus(e.target.value)}>
         {STATUS_OPTIONS.map((item) => (
